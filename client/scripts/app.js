@@ -22,8 +22,46 @@ app.init = () => {
 
 app.server = 'http://parse.sfm6.hackreactor.com/chatterbox/classes/messages';
 
-var messageText = document.getElementById('messageText');
-console.log('this is the message text: ', messageText);
+// Two lines below are for Message implementation
+var test = () => {
+  var postedMessage = document.getElementsById('#messageText').value;
+  console.log('this is the message text: ', postedMessage, 'hello' );
+
+}
+
+// Dropdown functionality ______________________________________________
+
+var myFunction = () => {
+  document.getElementById('myDropdown').classList.toggle('show');
+}
+window.onclick = function(event) {
+  if (event.target.matches('#lobby')) {
+    app.fetch()
+  } else if (event.target.matches('#spaceball')) {
+    app.clearMessages(); 
+  } else if (!event.target.matches('.dropbtn')) {
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}
+
+// window.onclick = function(event) {
+//   if (event.target.matches('#lobby')) {
+//     app.fetch()
+//   }
+// }
+// window.onclick = function(event) {
+//   if (event.target.matches('#spaceball')) {
+//     app.clearMessages();
+//   }
+// }
+// End DropDown functionality ______________________________________________
 
 app.send = (message) => {
   $.ajax({
@@ -49,8 +87,9 @@ app.fetch = () => {
     data: {},
     contentType: 'application/json',
     success: function (data) {
+      //console.log(data.results).   <-- shows me roomName
       for (var i = data.results.length - 1; i >= 0; i--) {
-        $('#chats').append('<div>' + data.results[i].username + ': ' + data.results[i].text + '</div>');
+        $('#chats').append('<div>' + data.results[i].username + ': ' + data.results[i].text + ': ' + data.results[i].roomname + '</div>');
       }
       console.log('chatterbox: Messages received');
     },
@@ -70,9 +109,13 @@ app.renderMessage = (message) => {
   $('#chats').append('<div>' + message.text + '</div>');
 };
 
+// JT creates Add Room functionality to add to #roomSelect Div
+app.renderRoom = (makeRoom) => {
+  console.log('<div>' + makeRoom + '</div>');
+  $('#roomSelect').append('<div>' + makeRoom + '</div>');
+}
+
 app.init();
-
-
 
 
 
