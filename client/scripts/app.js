@@ -61,7 +61,7 @@ app.fetch = () => {
     contentType: 'application/json',
     success: function (data) {
       _.each(data.results, function(message) {
-        $('.messages').append('<p>' + message.text + '</p>');
+        $('#chats').append('<p>' + message.text + '</p>');
       });
       console.log('chatterbox: Message received', data);
     },
@@ -72,8 +72,47 @@ app.fetch = () => {
   });
 };
 
-app.clearMessages = () => {
 
+app.clearMessages = () => {
+  $('#chats').empty();
 };
 
-app.fetch();
+app.fetch();  // <-- invokes the fetch method to produce messages for MAX
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
