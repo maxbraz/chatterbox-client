@@ -23,7 +23,7 @@ app.init = () => {
 app.server = 'http://parse.sfm6.hackreactor.com/chatterbox/classes/messages';
 
 var messageText = document.getElementById('messageText');
-console.log('this is the message text: ', messageText)
+console.log('this is the message text: ', messageText);
 
 app.send = (message) => {
   $.ajax({
@@ -49,7 +49,7 @@ app.fetch = () => {
     data: {},
     contentType: 'application/json',
     success: function (data) {
-      for (var i = data.results.length - 1; i >= 0 ; i--) {
+      for (var i = data.results.length - 1; i >= 0; i--) {
         $('#chats').append('<div>' + data.results[i].username + ': ' + data.results[i].text + '</div>');
       }
       console.log('chatterbox: Messages received');
