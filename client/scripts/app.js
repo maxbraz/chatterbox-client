@@ -65,6 +65,9 @@ app.clearMessages = () => {
   $('#chats').empty();
 };
 
+var message = {
+  text: 'Yo';
+}
 app.renderMessage = (message) => {
   // app.send(message);
   $('#chats').append('<div>' + message.text + '</div>');
