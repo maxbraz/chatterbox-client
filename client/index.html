@@ -15,7 +15,7 @@
         if (newSearch !== '' & newSearch !== '?') {
           newSearch += '&';
         }
-        newSearch += 'username=' + (prompt('What is your name?') || 'anonymous');
+        newSearch += 'username=' + (prompt('What is your name?') || 'anonymous'); // Prompts us each time we click Post Message
         window.location.search = newSearch;
       }
     </script>
@@ -26,21 +26,29 @@
   <body>
     <div id="main">
       <h1>chatterbox</h1>
-      <div id='#roomSelect</button>
-        <div id="myDropdown" class="dropdown-content">'>
-      <button onclick="myFunction()" class="dropbtn">Dropdown
-          <a href="#">Create New Room</a>
-        </div>
-      </div>
-      
       <!-- Input and submit -->
+
+        <div class="dropdown">
+          <button onclick="myFunction()" class="dropbtn">Dropdown</button>
+          <div id="myDropdown" class="dropdown-content">
+            <a href="#lobby" id='lobby'>Lobby</a>
+            <a href="#spaceball" id='spaceball'>Spaceball</a>
+            <a href="#">Link 3</a>
+          </div>
+        </div>
+      
+
       <form>
          Message:<br>
        <input type='text' id='messageText'><br>
-       <input id='postMessage' type='submit' value='post message'>
+       <button onclick = 'test()'>Submit</button> 
+       <!-- id='postMessage' type='submit' value='post message'> -->
       </form>
 
     </div>
     <div id='chats'></div>
+
+    <div id='roomSelect'></div>
+
   </body>
 </html>
