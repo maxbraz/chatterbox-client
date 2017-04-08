@@ -1,54 +1,43 @@
-// YOUR CODE HERE:
-
-//********************** EXAMPLE POST REQUEST  *********************************
-//$.ajax({
-  // This is the url you should use to communicate with the parse API server.
-  //   url: 'http://parse.CAMPUS.hackreactor.com/chatterbox/classes/messages',
-  //   type: 'POST',
-  //   data: JSON.stringify(message),
-  //   contentType: 'application/json',
-  //   success: function (data) {
-  //     console.log('chatterbox: Message sent');
-  //   },
-  //   error: function (data) {
-  //     // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
-  //     console.error('chatterbox: Failed to send message', data);
-  //   }
-  // });
-
 // ********************** EXAMPLE POST MESSAGE **********************************
 // var message = {
 //   username: 'shawndrost',
 //   text: 'trololo',
 //   roomname: '4chan'
 // };
-var message = {
-  username: 'shawndrost',
-  text: 'trololo',
-  roomname: '4chan'
-};
+// $(document).ready(function() {
+//  app.init();
+// });
 
+// var message = {
+//   username: 'shawndrost',
+//   text: 'trololo',
+//   roomname: '4chan'
+// };
 
 var app = {};
 
 app.init = () => {
-
+  app.fetch();
 };
 
 app.server = 'http://parse.sfm6.hackreactor.com/chatterbox/classes/messages';
 
-app.send = (data) => {
+var messageText = document.getElementById('messageText');
+console.log('this is the message text: ', messageText)
+
+app.send = (message) => {
   $.ajax({
     url: app.server,
     type: 'POST',
-    data: JSON.stringify(data),
+    data: JSON.stringify(message),
     contentType: 'application/json',
     success: function (data) {
-      console.log('chatterbox: Message received');
+      console.log('this is the children length ', $('#chats').children().length);
+      console.log('chatterbox: Message sent');
     },
     error: function (data) {
       // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
-      console.error('chatterbox: Failed to retrieve message', data);
+      console.error('chatterbox: Failed to send message', data);
     }
   });
 };
@@ -60,10 +49,10 @@ app.fetch = () => {
     data: {},
     contentType: 'application/json',
     success: function (data) {
-      _.each(data.results, function(message) {
-        $('#chats').append('<p>' + message.text + '</p>');
-      });
-      console.log('chatterbox: Message received', data);
+      for (var i = data.results.length - 1; i >= 0 ; i--) {
+        $('#chats').append('<div>' + data.results[i].username + ': ' + data.results[i].text + '</div>');
+      }
+      console.log('chatterbox: Messages received');
     },
     error: function (data) {
       // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
@@ -72,30 +61,16 @@ app.fetch = () => {
   });
 };
 
-
 app.clearMessages = () => {
   $('#chats').empty();
 };
 
-app.fetch();  // <-- invokes the fetch method to produce messages for MAX
+app.renderMessage = (message) => {
+  // app.send(message);
+  $('#chats').append('<div>' + message.text + '</div>');
+};
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+app.init();
 
 
 

@@ -26,13 +26,21 @@
   <body>
     <div id="main">
       <h1>chatterbox</h1>
-      <!-- Your HTML goes here! -->
+      <div id='#roomSelect</button>
+        <div id="myDropdown" class="dropdown-content">'>
+      <button onclick="myFunction()" class="dropbtn">Dropdown
+          <a href="#">Create New Room</a>
+        </div>
+      </div>
+      
+      <!-- Input and submit -->
       <form>
          Message:<br>
-       <input type="text"><br>
-       <input type="submit" value="post message">
+       <input type='text' id='messageText'><br>
+       <input id='postMessage' type='submit' value='post message'>
       </form>
+
     </div>
-    <div id="chats"></div>
+    <div id='chats'></div>
   </body>
 </html>
