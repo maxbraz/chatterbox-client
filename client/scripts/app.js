@@ -3,61 +3,63 @@ $(document).ready(function() {
 
   $('#postMessage').on('click', function(event) {
     event.preventDefault();
-    var $text = $('#messageText').val();
-    var $url = $(location).attr('href');
-    var $username = $url.slice($url.indexOf('=') + 1, $url.indexOf('#'));
-    var $roomname = $url.slice($url.indexOf('#') + 1);
+    let $text = $('#messageText').val();
+    let $url = $(location).attr('href');
+    let $username = $url.slice($url.indexOf('=') + 1, $url.indexOf('#'));
+    let $roomname = $url.slice($url.indexOf('#') + 1);
 
-    var $message = {
+    let $message = {
       username: $username,
       text: $text,
       roomname: $roomname
-    }
+    };
+
     app.send($message);
+    app.handleSubmit();
+    $('#messageText').val('');
   });
 
   $('#CreateRoom').on('click', function(event) {
-    console.log('we got the click');
-    app.renderRoom( prompt('new roomname here: ') )
+    app.renderRoom(prompt('new roomname here: '));
   });
 
-  $('#myDropdown').click(function() {
-    console.log('What did we click?',this.id)
-    app.fetch (this.id);
+  $('#roomSelect').on('click', function() {
+    app.fetch(this.id);
   });
 
+  $('#chats').on('click', '.username', function() {
+    $(this).css('color', 'blue');
+    app.handleUsernameClick();
+  });
 });
 
-var app = {};
+let app = {};
+
+app.friends = {};
+
 app.init = () => {
   app.fetch('lobby');
 };
 
 app.server = 'http://parse.sfm6.hackreactor.com/chatterbox/classes/messages';
 
-// Two lines below are for Message implementation
-
-
-// Dropdown functionality ______________________________________________
-
-var myFunction = () => {
-  document.getElementById('myDropdown').classList.toggle('show');
-}
+let myFunction = () => {
+  document.getElementById('roomSelect').classList.toggle('show');
+};
 
 window.onclick = function(event) {
   if (event.target.matches('#lobby')) {
-    app.fetch( 'lobby' );
+    app.fetch('lobby');
   } else if (!event.target.matches('.dropbtn')) {
-    var dropdowns = document.getElementsByClassName("dropdown-content");
-    var i;
-    for (i = 0; i < dropdowns.length; i++) {
-      var openDropdown = dropdowns[i];
+    let dropdowns = document.getElementsByClassName('dropdown-content');
+    for (let i = 0; i < dropdowns.length; i++) {
+      let openDropdown = dropdowns[i];
       if (openDropdown.classList.contains('show')) {
         openDropdown.classList.remove('show');
       }
     }
   }
-}
+};
 
 app.send = (message) => {
   $.ajax({
@@ -65,50 +67,48 @@ app.send = (message) => {
     type: 'POST',
     data: JSON.stringify(message),
     contentType: 'application/json',
-    success: function (data) {
+    success: function(data) {
       app.renderMessage(message);
       console.log('chatterbox: Message sent');
     },
-    error: function (data) {
-      // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
+    error: function(data) {
       console.error('chatterbox: Failed to send message', data);
     }
   });
 };
 
 app.encodeHTML = (s) => {
+  if (s === undefined) {
+    return;
+  }
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
-}
+};
 
-app.fetch = ( nameOfRoom ) => {
+app.fetch = (nameOfRoom) => {
   $.ajax({
     url: app.server,
     type: 'GET',
-    data: {"order":"-createdAt", "limit": 1000},
+    data: { 'order': '-createdAt', 'limit': 1000 },
     contentType: 'application/json',
-    success: function (data) {
-      // nameOfRoom = nameOfRoom || data.results;
-      var filteredArr = _.filter(data.results, function(dataObj) {
+    success: function(data) {
+      nameOfRoom = nameOfRoom || 'lobby';
+      let filteredArr = _.filter(data.results, function(dataObj) {
         return dataObj.roomname === nameOfRoom;
       });
 
       app.clearMessages();
 
       for (let message of filteredArr) {
+        let text = app.encodeHTML(message.text);
+        let username = app.encodeHTML(message.username);
+        let roomname = app.encodeHTML(message.roomname);
 
-        var text = app.encodeHTML(message.text);   
-        console.log(text)
-        var username = app.encodeHTML(message.username);
-        console.log(username)
-        var roomname = app.encodeHTML(message.roomname);
-        console.log(roomname)
-
-        $('#chats').append('<div>' + username + ': ' + text + ': ' + roomname + '</div>' + '<br>');
+        $('#chats').append('<div>' + '<span>' + username + ': ' + '</span>' + text + ': ' + roomname + '</div>' + '<br>');
+        $('span').addClass('username');
       }
       console.log('chatterbox: Messages received');
     },
-    error: function (data) {
-      // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
+    error: function(data) {
       console.error('chatterbox: Failed to retrieve message', data);
     }
   });
@@ -119,20 +119,18 @@ app.clearMessages = () => {
 };
 
 app.renderMessage = (message) => {
-  $('#chats').append('<div>' + message.username + ': ' + message.text + ': ' + message.roomname + '</div>');
+  $('#chats').prepend('<div>' + '<span>' + message.username + ': ' + '</span>' + message.text + ': ' + message.roomname + '</div>');
+  $('span').addClass('username');
 };
 
 app.renderRoom = (roomName) => {
-  $('#myDropdown').append('<a href=#' + roomName + ' id=' + roomName + '>' + roomName + '</a>');
+  $('#roomSelect').append('<a href=#' + roomName + ' id=' + roomName + '>' + roomName + '</a>');
 };
 
+app.handleUsernameClick = (username) => {
+  app.friends[username] = username;
+};
 
+app.handleSubmit = () => {
 
-
-
-
-
-
-
-
-
+};
