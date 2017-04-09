@@ -1,7 +1,7 @@
 $(document).ready(function() {
   app.init();
 
-  $('#postMessage').on('click', function(event) {
+  $('#send').on('click', function(event) {
     event.preventDefault();
     let $text = $('#messageText').val();
     let $url = $(location).attr('href');
@@ -121,6 +121,7 @@ app.clearMessages = () => {
 app.renderMessage = (message) => {
   $('#chats').prepend('<div>' + '<span>' + message.username + ': ' + '</span>' + message.text + ': ' + message.roomname + '</div>');
   $('span').addClass('username');
+  $('span').addClass('col-lg-6');
 };
 
 app.renderRoom = (roomName) => {
