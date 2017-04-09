@@ -3,28 +3,34 @@ $(document).ready(function() {
 
   $('#postMessage').on('click', function(event) {
     event.preventDefault();
-    console.log('we got the click');
     var $text = $('#messageText').val();
     var $url = $(location).attr('href');
-    var $username //= get the username from the url
-    var $roomname //= get the room from the url
+    var $username = $url.slice($url.indexOf('=') + 1, $url.indexOf('#'));
+    var $roomname = $url.slice($url.indexOf('#') + 1);
 
     var $message = {
       username: $username,
       text: $text,
       roomname: $roomname
     }
-
     app.send($message);
+  });
+
+  $('#CreateRoom').on('click', function(event) {
+    console.log('we got the click');
+    app.renderRoom( prompt('new roomname here: ') )
+  });
+
+  $('#myDropdown').click(function() {
+    console.log('What did we click?',this.id)
+    app.fetch (this.id);
   });
 
 });
 
 var app = {};
-
 app.init = () => {
-  app.fetch();
-  console.log(app.fetch())
+  app.fetch('lobby');
 };
 
 app.server = 'http://parse.sfm6.hackreactor.com/chatterbox/classes/messages';
@@ -40,9 +46,7 @@ var myFunction = () => {
 
 window.onclick = function(event) {
   if (event.target.matches('#lobby')) {
-    app.fetch( 'lobby' )
-  } else if (event.target.matches('#China')) {
-    app.fetch('China') 
+    app.fetch( 'lobby' );
   } else if (!event.target.matches('.dropbtn')) {
     var dropdowns = document.getElementsByClassName("dropdown-content");
     var i;
@@ -54,18 +58,6 @@ window.onclick = function(event) {
     }
   }
 }
-
-// window.onclick = function(event) {
-//   if (event.target.matches('#lobby')) {
-//     app.fetch()
-//   }
-// }
-// window.onclick = function(event) {
-//   if (event.target.matches('#spaceball')) {
-//     app.clearMessages();
-//   }
-// }
-// End DropDown functionality ______________________________________________
 
 app.send = (message) => {
   $.ajax({
@@ -84,22 +76,34 @@ app.send = (message) => {
   });
 };
 
+app.encodeHTML = (s) => {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+}
+
 app.fetch = ( nameOfRoom ) => {
   $.ajax({
     url: app.server,
     type: 'GET',
-    data: {},
+    data: {"order":"-createdAt", "limit": 1000},
     contentType: 'application/json',
     success: function (data) {
       // nameOfRoom = nameOfRoom || data.results;
       var filteredArr = _.filter(data.results, function(dataObj) {
-        return dataObj.roomname === nameOfRoom
+        return dataObj.roomname === nameOfRoom;
       });
 
       app.clearMessages();
 
       for (let message of filteredArr) {
-        $('#chats').prepend('<div>' + message.username + ': ' + message.text + ': ' + message.roomname + '</div>' + '<br>');
+
+        var text = app.encodeHTML(message.text);   
+        console.log(text)
+        var username = app.encodeHTML(message.username);
+        console.log(username)
+        var roomname = app.encodeHTML(message.roomname);
+        console.log(roomname)
+
+        $('#chats').append('<div>' + username + ': ' + text + ': ' + roomname + '</div>' + '<br>');
       }
       console.log('chatterbox: Messages received');
     },
@@ -114,29 +118,13 @@ app.clearMessages = () => {
   $('#chats').empty();
 };
 
-// var message = {
-//   text: 'Yo',
-//   username: 'Jonathan',
-//   room: 'lobby'
-// }
-
 app.renderMessage = (message) => {
-  $('#chats').prepend('<div>' + message.text + '</div>');
+  $('#chats').append('<div>' + message.username + ': ' + message.text + ': ' + message.roomname + '</div>');
 };
 
-// JT creates Add Room functionality to add to #roomSelect Div
-app.renderRoom = (makeRoom) => {
-  console.log('<div>' + makeRoom + '</div>');
-  $('#roomSelect').append('<div>' + makeRoom + '</div>');
-}
-
-
-// if lobby was selected from dropDown
-  // fetch all data
-  // app.fetch = (  'room' )
-    // newArr = [];
-    // filter all objects with roomname === lobby.  //('room')
-
+app.renderRoom = (roomName) => {
+  $('#myDropdown').append('<a href=#' + roomName + ' id=' + roomName + '>' + roomName + '</a>');
+};
 
 
 
